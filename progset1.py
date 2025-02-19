@@ -95,10 +95,49 @@ def teseract_graph(n):
 
     return g
 
+''' Min Heap Implementation '''
+class minheap: 
+    def __init__(self): 
+        self.heap = []
+
+    def pop(self): 
+        #returns and removes the minimum value in the heap. This is deleteMin() in the lecture 6 notes 
+        pass
+
+    def push(self):
+        #adds a new value into the heap and maintains heap structure. This is Insert() in the lecture 6 notes 
+        pass 
+
 
 ''' Below you can find Prim's Minimum Subtree Algorithm'''
 
+def prims_mst(g): 
+    pass
+    #initialize d data structure to keep track of the distances
 
+    #initialize the heap & insert the source node 
+
+    #initialize S, which I think contains all the vertices we already have spanned
+
+    #initialize the prev data structure that just keeps track of the vertex that came before the current one in our spanning tree
+
+    #While the queue is not empty
+
+        #pop the minimum vertex (highest priority vertex)
+
+        #add this vertex to S
+
+        #for all of that vertex's edges whose destination vertices are not in S
+
+            #if d[v] is greater than our newly calculated distance to v: 
+
+                #update d[v]
+
+                #update prev[v]
+
+                #insert v into the queue
+
+    #return the mst, which I think is reconstructed form the prev data structure 
 
 
 
