@@ -6,6 +6,9 @@ import time
 import pandas as pd 
 import random
 
+
+''' Below you can find the Graph Generators '''
+
 #Complete Graph Generator 
 def complete_graph(n): 
 
@@ -65,10 +68,7 @@ def square_graph(n):
 
     return g
 
-
-
-#4 dimensional graph
-#Unit Square Graph Generator 
+#4 Dimensional Graph Generator
 def teseract_graph(n): 
     g = {}
 
@@ -77,7 +77,7 @@ def teseract_graph(n):
         x, y, z, w = random.uniform(0, 1), random.uniform(0,1), random.uniform(0,1), random.uniform(0,1)
 
         #the location will be the value of this node, so that its outgoing edges can be easily looked up later on 
-        g[(x,y, z, w)] = []
+        g[(x, y, z, w)] = []
 
         n -= 1
 
@@ -96,10 +96,18 @@ def teseract_graph(n):
     return g
 
 
+''' Below you can find Prim's Minimum Subtree Algorithm'''
+
 
 
 
 
 
 if __name__ == "__main__":  
-    print("girl you haven't finished")
+
+    g_1 = complete_graph(5)
+    g_2 = hypercube_graph(5)
+    g_3 = square_graph(5)
+    g_4 = teseract_graph(5)
+
+    print(g_4)
