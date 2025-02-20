@@ -102,12 +102,53 @@ class minheap:
 
     def pop(self): 
         #returns and removes the minimum value in the heap. This is deleteMin() in the lecture 6 notes 
-        pass
+        output = self.heap[0]
+        
+        #swap the end with the front
+        self.heap[0] = self.heap[len(self.heap)-1]
+        self.heap.pop()
 
-    def push(self):
+        #bubble down 
+        i = 0
+        heap_len = len(self.heap) 
+        while i < len(self.heap): 
+
+            left = (2 * i) + 1 
+            right = (2 * i) + 2
+
+            #okay just keep replacing the chosen child thats the easiest way 
+            chosen_child = i
+            if left < heap_len and self.heap[left][0] < self.heap[i][0]: 
+                chosen_child = left 
+            if right < heap_len and self.heap[right][0] < self.heap[chosen_child][0]: 
+                chosen_child = right
+            if chosen_child == i: 
+                break
+            
+            #swap 
+            tmp  = self.heap[chosen_child]
+            self.heap[chosen_child] = self.heap[i]
+            self.heap[i] = tmp
+            i = chosen_child
+            
+        return output
+
+    def push(self, val, dis) : #val will have the actual node value and the d[val]
         #adds a new value into the heap and maintains heap structure. This is Insert() in the lecture 6 notes 
-        pass 
+        self.heap.append((val, dis))
 
+        #bubble up
+        i = len(self.heap) - 1
+        while i > 0: 
+            
+            parent_i = (i - 1) // 2 #apparently theres an empirical way to find the parent node. 
+            if self.heap[parent_i][1] > self.heap[i][1]: 
+                tmp = self.heap[parent_i]
+                self.heap[parent_i] = self.heap[i]
+                self.heap[i] = tmp
+                i = parent_i
+            else: 
+                break
 
 ''' Below you can find Prim's Minimum Subtree Algorithm'''
 
@@ -138,8 +179,6 @@ def prims_mst(g):
                 #insert v into the queue
 
     #return the mst, which I think is reconstructed form the prev data structure 
-
-
 
 
 if __name__ == "__main__":  
