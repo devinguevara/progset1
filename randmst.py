@@ -153,26 +153,43 @@ class minheap:
 ''' Below you can find Prim's Minimum Subtree Algorithm'''
 
 def prims_mst(g): 
-    pass
     #initialize d data structure to keep track of the distances
     d = {v: float('inf') for v in g}
-    #initialize the heap and source node & insert the source node 
+
+    #initialize source node
     start = next(iter(g))
     d[start] = 0
+
+    #initialize heap 
     queue = minheap()
     queue.push(start,0)
+
     #initialize S to keep track of visited nodes
     S = set()
+
     #initialize the prev data structure that just keeps track of the vertex that came before the current one in our spanning tree
     prev = {v: None for v in g}
+
+    #track mst weight
+    mst_weight = 0
 
     #While the queue is not empty
     while queue.heap:
 
         #pop the minimum vertex (highest priority vertex)
         u, weight = queue.pop()
-        #add this vertex to S
+
+        # if node is visited, then skip
+        if u in S:
+            continue 
+
+        #add this vertex to S, set of visited nodes
         S.add(u)
+
+        #update the mst weight
+        if prev[u] is not None:
+            mst_weight += weight
+
         #for all of that vertex's edges whose destination vertices are not in S
         for v, w in g[u]:
             #if d[v] is greater than our newly calculated distance to v: 
@@ -183,19 +200,29 @@ def prims_mst(g):
                 prev[v] = u
                 #insert v into the queue
                 queue.push(v, w)
-    #return the mst, which I think is reconstructed form the prev data structure 
-    mst = {v: [] for v in g}
-    for v in g:
-        if prev[v] is not None:
-            mst[v].append((prev[v], d[v]))
-            mst[prev[v]].append((v, d[v]))
-    return mst
+
+    return mst_weight
+    # #return the mst, which I think is reconstructed form the prev data structure 
+    # mst = {v: [] for v in g}
+    # for v in g:
+    #     if prev[v] is not None:
+    #         mst[v].append((prev[v], d[v]))
+    #         mst[prev[v]].append((v, d[v]))
+    # return mst
+
 
 if __name__ == "__main__":  
 
-    g_1 = complete_graph(5)
-    g_2 = hypercube_graph(5)
-    g_3 = square_graph(5)
-    g_4 = teseract_graph(5)
+    #tests:
+    # g_1 = complete_graph()
+    # g_2 = hypercube_graph(5)
+    # g_3 = square_graph(5)
+    # g_4 = teseract_graph(5)
 
-    print(g_4)
+    # print(g_4)
+
+    # mst_1 = prims_mst(g_1)
+    #experiments
+    #complete graphs
+
+    #hypercube graphs
