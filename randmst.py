@@ -210,6 +210,21 @@ def prims_mst(g):
     #         mst[prev[v]].append((v, d[v]))
     # return mst
 
+def avg_mst_weight(n, graph_type, trails = 5):
+    total_weight = 0
+    for i in range(trails):
+        if graph_type == "complete":
+            g = complete_graph(n)
+        elif graph_type == "hypercube":
+            g = hypercube_graph(n)
+        else:
+            raise ValueError("Invalid graph type")
+
+        #sum up weights of all MSTs generated
+        total_weight += prims_mst(g)
+
+    #returns avergae weight of MSTs
+    return total_weight / trails
 
 if __name__ == "__main__":  
 
@@ -223,6 +238,28 @@ if __name__ == "__main__":
 
     # mst_1 = prims_mst(g_1)
     #experiments
-    #complete graphs
+    graph_types = ["complete", "hypercube"]
+    trials = 5
+    n_values = [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144]
 
-    #hypercube graphs
+    # Store results as a list of tuples
+    results = []
+
+    print("Running experiments...")
+    for graph_type in graph_types:
+        for n in n_values:
+            if graph_type == "hypercube" or (graph_type == "complete" and n <= 32768):
+                avg_weight = avg_mst_weight(n, graph_type, trials)
+                results.append((graph_type, n, avg_weight))
+                print(f"{graph_type} Graph: n={n}, Avg MST Weight={avg_weight:.4f}")
+
+    # Store results in a DataFrame
+    df = pd.DataFrame(results, columns=["Graph Type", "n", "Average MST Weight"])
+
+    # Save to CSV
+    df.to_csv("mst_experiment_results.csv", index=False)
+
+    # Print table
+    print("\nExperiment Results:")
+    print(df.to_string(index=False))
+
