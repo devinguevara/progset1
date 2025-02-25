@@ -12,6 +12,8 @@ import random
 #Complete Graph Generator 
 def complete_graph(n): 
 
+    upper_bound = 1/n
+
     g = {i: [] for i in range(n)} #where every node has a list of it edges to other nodes where (a,b) means edge to a with weight b 
 
     for u in range(n): 
@@ -22,22 +24,28 @@ def complete_graph(n):
 
     return g 
 
+
 #Hypercube Graph Generator 
 def hypercube_graph(n):
+   
+    g = {i: [] for i in range(n)}
 
-    g = {i:[] for i in range(n)}
+    #basically, you dont have to check every pair 
+    # if vertex a with value a, (like v =1), has edges with a + 2^0, a + 2^1, a + 2^2 = a+1, a+2, a+4 
+    #so just check if those values are less than n, and if so you have an edge. this saves a lot of time
 
-    #iterate through every pair of nodes 
     for u in range(n): 
-        for v in range(u + 1, n):
-    
-            # if the difference in their value is a power of 2, then assign an edge to them with random uniform weight [0, 1]
-            x = abs(u - v)
-            if x > 0 and (x & (x - 1)) == 0:
 
-                w = random.uniform(0,1)
-                g[u].append((v,w))
-                g[v].append((u,w))
+        p = 0
+
+        while u + 2**p < n: 
+            
+            v = u + 2**p
+            w = random.uniform(0, 1)
+
+            g[v].append((u, w))
+            g[u].append((v, w))
+            p += 1
 
     return g
 
@@ -118,9 +126,9 @@ class minheap:
 
             #okay just keep replacing the chosen child thats the easiest way 
             chosen_child = i
-            if left < heap_len and self.heap[left][0] < self.heap[i][0]: 
+            if left < heap_len and self.heap[left][1] < self.heap[i][1]: 
                 chosen_child = left 
-            if right < heap_len and self.heap[right][0] < self.heap[chosen_child][0]: 
+            if right < heap_len and self.heap[right][1] < self.heap[chosen_child][1]: 
                 chosen_child = right
             if chosen_child == i: 
                 break
@@ -164,14 +172,15 @@ def prims_mst(g):
     queue = minheap()
     queue.push(start,0)
 
-    #initialize S to keep track of visited nodes
+    #initialize S to keep track of nodes that are in the MST, of course it starts with the first node
     S = set()
 
     #initialize the prev data structure that just keeps track of the vertex that came before the current one in our spanning tree
     prev = {v: None for v in g}
 
-    #track mst weight
+    #track mst weightr
     mst_weight = 0
+    max_weight = 0 
 
     #While the queue is not empty
     while queue.heap:
@@ -187,8 +196,8 @@ def prims_mst(g):
         S.add(u)
 
         #update the mst weight
-        if prev[u] is not None:
-            mst_weight += weight
+        mst_weight += weight
+        max_weight = max(max_weight, weight)
 
         #for all of that vertex's edges whose destination vertices are not in S
         for v, w in g[u]:
@@ -201,14 +210,8 @@ def prims_mst(g):
                 #insert v into the queue
                 queue.push(v, w)
 
-    return mst_weight
-    # #return the mst, which I think is reconstructed form the prev data structure 
-    # mst = {v: [] for v in g}
-    # for v in g:
-    #     if prev[v] is not None:
-    #         mst[v].append((prev[v], d[v]))
-    #         mst[prev[v]].append((v, d[v]))
-    # return mst
+    return mst_weight, max_weight
+
 
 def avg_mst_weight(n, graph_type, trials = 5):
     total_weight = 0
@@ -233,34 +236,15 @@ def avg_mst_weight(n, graph_type, trials = 5):
 
 if __name__ == "__main__":  
 
-    #tests:
-    # g_1 = complete_graph()
-    # g_2 = hypercube_graph(5)
-    # g_3 = square_graph(5)
-    # g_4 = teseract_graph(5)
 
-    # print(g_4)
-
-    # mst_1 = prims_mst(g_1)
     #experiments
-    graph_types = ["complete", "hypercube"]
-    trials = 5
     n_values = [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144]
 
-    # Store results as a list of tuples
-    results = []
+   
+    for n in n_values: 
+        g = complete_graph(n)
+        mst_w, max_w = prims_mst(g)
+        print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}")
 
-    print("Running experiments...")
-    for graph_type in graph_types:
-        for n in n_values:
-            if graph_type == "hypercube" or (graph_type == "complete" and n <= 32768):
-                avg_weight = avg_mst_weight(n, graph_type, trials)
-                results.append((graph_type, n, avg_weight))
 
-    # Store results in a DataFrame
-    df = pd.DataFrame(results, columns=["Graph Type", "n", "Average MST Weight"])
-    df.to_csv("mst_experiment_results.csv", index=False)
-
-    # Print results as a table
-    print("\nFinal Experiment Results:")
-    print(df.to_string(index=False))
+    
