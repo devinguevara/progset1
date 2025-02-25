@@ -5,6 +5,7 @@ import seaborn as sns
 import time
 import pandas as pd 
 import random
+import numpy as np 
 
 
 ''' Below you can find the Graph Generators '''
@@ -12,15 +13,32 @@ import random
 #Complete Graph Generator 
 def complete_graph(n): 
 
-    upper_bound = 1/n
-
     g = {i: [] for i in range(n)} #where every node has a list of it edges to other nodes where (a,b) means edge to a with weight b 
+    #weights = np.random.uniform(0, 1, (n*(n-1) // 2))
+    upper_bound = 9/n
+
+    '''
+    upper bound = x / 128 
+    upper boound * 128 = x
+     upper bound = 6.4/124 
+     upper bound = 5.66/ 256
+     upper bound = 6.1/512
+     upper bound = 7.7 / 1024
+     upper bound = 7.5/2048
+     upper bound = 9.99 / 4096
+     upper bound = 
+    '''
+    # for w in weight: 
+    #     if w > upp
+    #     u = random.randint(0, n - 1) #because this is inclusive
+    #     v = random.randint(0, n - 1)
 
     for u in range(n): 
         for v in range(u + 1, n): 
             w = random.uniform(0, 1)
-            g[u].append((v, w)) #we store this edge in both to optimize for this  
-            g[v].append((u, w))
+            if w < upper_bound: 
+                g[u].append((v, w)) #we store this edge in both to optimize for this  
+                g[v].append((u, w))
 
     return g 
 
@@ -51,7 +69,15 @@ def hypercube_graph(n):
 
 #Unit Square Graph Generator 
 def square_graph(n): 
+    '''
+    upper_bound = 18/ 128
+    upper bound = 28/256
+    upper bound = 38/512
+    upper bound = 64/1024
+
+    '''
     g = {}
+    upper_bound = 18/ 128
 
     while n > 0:
         #generate the location of this vertex & add it to the graph g 
@@ -71,15 +97,17 @@ def square_graph(n):
                 
                 euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 )**(1/2)
 
-                g[u].append((v, euc_dis))
-                g[v].append((u, euc_dis))
+                if euc_dis < upper_bound: 
+
+                    g[u].append((v, euc_dis))
+                    g[v].append((u, euc_dis))
 
     return g
 
 #4 Dimensional Graph Generator
 def teseract_graph(n): 
     g = {}
-
+    upper_bound = 0.5
     while n > 0:
         #generate the location of this vertex & add it to the graph g 
         x, y, z, w = random.uniform(0, 1), random.uniform(0,1), random.uniform(0,1), random.uniform(0,1)
@@ -97,9 +125,10 @@ def teseract_graph(n):
             if j > i: 
                 
                 euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 + (u[2] - v[2])**2 + (u[3] - v[3])**2)**(1/2)
+                if euc_dis < .5: 
 
-                g[u].append((v, euc_dis))
-                g[v].append((u, euc_dis))
+                    g[u].append((v, euc_dis))
+                    g[v].append((u, euc_dis))
 
     return g
 
@@ -235,6 +264,7 @@ def avg_mst_weight(n, graph_type, trials = 5):
     return avg_weight
 
 if __name__ == "__main__":  
+    
 
 
     #experiments
@@ -242,9 +272,9 @@ if __name__ == "__main__":
 
    
     for n in n_values: 
-        g = complete_graph(n)
+        g = teseract_graph(n)
+        
         mst_w, max_w = prims_mst(g)
         print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}")
 
 
-    
