@@ -132,6 +132,45 @@ def teseract_graph(n):
 
     return g
 
+#3 Dimensional Graph Generator
+def cube_graph(n, upper_bound=None):
+    #first we want to generate an array of n vertices with 3 coordinates, (x,y,z), each where x, y, z are random numbers between 0 and 1
+    vertices = np.random.rand(n,3)
+
+
+    upper_bound = 0.3
+
+    '''
+    based on experiments, we can see that we kind of have some sort of exponential decay
+    as n increases, the max weight of an edge decreases exponentially
+
+    38/128
+    55/256
+
+
+    '''
+    #initialize graph as empty dictionary
+    g = {i: [] for i in range(n)}
+
+    #loop through all PAIRS of vertices
+    for i in range(n):
+        for j in range(i+1, n):
+            #calculate Euclidean distance by first finding the differences in x, y, and z coordinates
+            dx = vertices[i][0] - vertices[j][0]
+            dy = vertices[i][1] - vertices[j][1]
+            dz = vertices[i][2] - vertices[j][2]
+            # Square root of sum of squared differences
+            dist = (dx * dx + dy * dy + dz * dz) ** 0.5  
+            
+            #if the distance is less than the threshold, then we keep the edge and add to graph
+            if upper_bound is None or dist < upper_bound:  
+                g[i].append((j, dist))
+                g[j].append((i, dist))
+        
+    return g
+
+        
+
 ''' Min Heap Implementation '''
 class minheap: 
     def __init__(self): 
@@ -272,7 +311,8 @@ if __name__ == "__main__":
 
    
     for n in n_values: 
-        g = teseract_graph(n)
+        # g = teseract_graph(n)
+        g = cube_graph(n, None)
         
         mst_w, max_w = prims_mst(g)
         print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}")
