@@ -1,9 +1,8 @@
-
 # libraries 
-import matplotlib.pyplot as plt
-import seaborn as sns
+# import matplotlib.pyplot as plt
+# import seaborn as sns
 import time
-import pandas as pd 
+# import pandas as pd 
 import random
 import numpy as np 
 
@@ -15,7 +14,8 @@ def complete_graph(n):
 
     g = {i: [] for i in range(n)} #where every node has a list of it edges to other nodes where (a,b) means edge to a with weight b 
     #weights = np.random.uniform(0, 1, (n*(n-1) // 2))
-    upper_bound = 9/n
+    # upper_bound = 9/n #old upper bound found by trial and error
+    upper_bound = 1.5592 * n**(-0.767839) #new upper bound found using power repression on desmos
 
     '''
     upper bound = x / 128 
@@ -106,10 +106,10 @@ def square_graph(n):
     return g
 
 
-#4 Dimensional Graph Generator
+#3 Dimensional Graph Generator
 def dim3_graph(n): 
     g = {}
-    upper_bound = 42 / n**(3.5/4)
+    upper_bound = 1.11513 / n**(0.301315)
     while n > 0:
         #generate the location of this vertex & add it to the graph g 
         x, y, z = random.uniform(0, 1), random.uniform(0,1), random.uniform(0,1)
@@ -127,7 +127,7 @@ def dim3_graph(n):
             if j > i: 
                 
                 euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 + (u[2] - v[2])**2)**(1/2)
-                if euc_dis < 1: 
+                if euc_dis < upper_bound: 
 
                     g[u].append((v, euc_dis))
                     g[v].append((u, euc_dis))
@@ -137,7 +137,8 @@ def dim3_graph(n):
 #4 Dimensional Graph Generator
 def teseract_graph(n): 
     g = {}
-    upper_bound = 64/n**(2.9/4)
+    # upper_bound = 64/n**(2.9/4)
+    upper_bound = (2.67841*10**(-16))*n**4 - (7.99192*10**(-12))*n**3 + (7.29465*10**(-8))*n**2 - 0.000251794*n+0.445904
     
     while n > 0:
         #generate the location of this vertex & add it to the graph g 
@@ -161,46 +162,7 @@ def teseract_graph(n):
                     g[u].append((v, euc_dis))
                     g[v].append((u, euc_dis))
 
-    return g
-
-#3 Dimensional Graph Generator
-def cube_graph(n, upper_bound=None):
-    #first we want to generate an array of n vertices with 3 coordinates, (x,y,z), each where x, y, z are random numbers between 0 and 1
-    vertices = np.random.rand(n,3)
-
-
-    upper_bound = 0.3
-
-    '''
-    based on experiments, we can see that we kind of have some sort of exponential decay
-    as n increases, the max weight of an edge decreases exponentially
-
-    38/128
-    55/256
-
-
-    '''
-    #initialize graph as empty dictionary
-    g = {i: [] for i in range(n)}
-
-    #loop through all PAIRS of vertices
-    for i in range(n):
-        for j in range(i+1, n):
-            #calculate Euclidean distance by first finding the differences in x, y, and z coordinates
-            dx = vertices[i][0] - vertices[j][0]
-            dy = vertices[i][1] - vertices[j][1]
-            dz = vertices[i][2] - vertices[j][2]
-            # Square root of sum of squared differences
-            dist = (dx * dx + dy * dy + dz * dz) ** 0.5  
-            
-            #if the distance is less than the threshold, then we keep the edge and add to graph
-            if upper_bound is None or dist < upper_bound:  
-                g[i].append((j, dist))
-                g[j].append((i, dist))
-        
-    return g
-
-        
+    return g   
 
 ''' Min Heap Implementation '''
 class minheap: 
@@ -312,8 +274,9 @@ def prims_mst(g):
     return mst_weight, max_weight
 
 
-def avg_mst_weight(n, graph_type, trials = 5):
+def avg_mst_weight(n, graph_type, trials=5):
     total_weight = 0
+    total_time = 0
 
     print(f"\nRunning {trials} trials for {graph_type} Graph with n={n}:")
     
@@ -322,30 +285,48 @@ def avg_mst_weight(n, graph_type, trials = 5):
             g = complete_graph(n)
         elif graph_type == "hypercube":
             g = hypercube_graph(n)
+        elif graph_type == "dim3":
+            g = dim3_graph(n)
         else:
             raise ValueError("Invalid graph type")
 
-        mst_weight = prims_mst(g)
-        total_weight += mst_weight
-        print(f"  Trial {i+1}: n={n}, MST Weight={mst_weight:.4f}")
+        start_time = time.time()  # Start timer
+        mst_weight, max_weight = prims_mst(g)  
+        end_time = time.time()  # End timer
+        
+        trial_time = end_time - start_time  
+        total_time += trial_time  
 
-    avg_weight = total_weight / trials
-    print(f"  → Average MST Weight for n={n}: {avg_weight:.4f}\n")
-    return avg_weight
+        total_weight += mst_weight  
+        print(f"  Trial {i+1}: n={n}, MST Weight={mst_weight:.4f}, Max Weight={max_weight:.4f}, Time={trial_time:.4f} seconds")
+
+    avg_weight = total_weight / trials  
+    avg_time = total_time / trials  
+    
+    print(f"  → Average MST Weight for n={n}: {avg_weight:.4f}")
+    print(f"  → Average Time for n={n}: {avg_time:.4f} seconds\n")
+
+    return avg_weight, avg_time  
 
 if __name__ == "__main__":  
     
-
-
     #experiments
-    n_values = [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144]
+    # n_values = [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144]
+    n_values = [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768]
 
    
     for n in n_values: 
+        start_time = time.perf_counter()
         # g = teseract_graph(n)
-        g = cube_graph(n, None)
+        # g = complete_graph(n)
+        # g = cube_graph(n)
+        g = dim3_graph(n)
+        
         
         mst_w, max_w = prims_mst(g)
-        print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}")
+        end_time = time.perf_counter()
 
-
+        total_time = end_time - start_time
+        print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}, Time: {total_time:.4f} seconds")
+        # avg_weight, avg_time = avg_mst_weight(n, "dim3", trials=5)
+        # print(f"n: {n} ---- Average MST weight: {avg_weight:.4f}, Average Time: {avg_time:.4f} seconds")
