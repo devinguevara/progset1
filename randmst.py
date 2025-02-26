@@ -69,6 +69,7 @@ def hypercube_graph(n):
 
 #Unit Square Graph Generator 
 def square_graph(n): 
+
     '''
     upper_bound = 18/ 128
     upper bound = 28/256
@@ -77,7 +78,7 @@ def square_graph(n):
 
     '''
     g = {}
-    upper_bound = 18/ 128
+    upper_bound = 18/n**(3/4)
 
     while n > 0:
         #generate the location of this vertex & add it to the graph g 
@@ -104,10 +105,40 @@ def square_graph(n):
 
     return g
 
+
+#4 Dimensional Graph Generator
+def dim3_graph(n): 
+    g = {}
+    upper_bound = 42 / n**(3.5/4)
+    while n > 0:
+        #generate the location of this vertex & add it to the graph g 
+        x, y, z = random.uniform(0, 1), random.uniform(0,1), random.uniform(0,1)
+
+        #the location will be the value of this node, so that its outgoing edges can be easily looked up later on 
+        g[(x, y, z)] = []
+
+        n -= 1
+
+    #go through all of the pairs of verticies and add an edge whose weight is just the euclidean distance between them 
+    #dude so you avoid redundant calculations, just only compute the edge if j is greater than I!!
+    for i, u in enumerate(g): 
+        for j, v in enumerate(g): 
+            
+            if j > i: 
+                
+                euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 + (u[2] - v[2])**2)**(1/2)
+                if euc_dis < 1: 
+
+                    g[u].append((v, euc_dis))
+                    g[v].append((u, euc_dis))
+
+    return g
+
 #4 Dimensional Graph Generator
 def teseract_graph(n): 
     g = {}
-    upper_bound = 0.5
+    upper_bound = 64/n**(2.9/4)
+    
     while n > 0:
         #generate the location of this vertex & add it to the graph g 
         x, y, z, w = random.uniform(0, 1), random.uniform(0,1), random.uniform(0,1), random.uniform(0,1)
@@ -125,7 +156,7 @@ def teseract_graph(n):
             if j > i: 
                 
                 euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 + (u[2] - v[2])**2 + (u[3] - v[3])**2)**(1/2)
-                if euc_dis < .5: 
+                if euc_dis < upper_bound: 
 
                     g[u].append((v, euc_dis))
                     g[v].append((u, euc_dis))
@@ -272,7 +303,7 @@ if __name__ == "__main__":
 
    
     for n in n_values: 
-        g = teseract_graph(n)
+        g = dim3_graph(n)
         
         mst_w, max_w = prims_mst(g)
         print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}")
