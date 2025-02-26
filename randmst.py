@@ -108,16 +108,11 @@ def square_graph(n):
 
 #4 Dimensional Graph Generator
 def dim3_graph(n): 
-    g = {}
     upper_bound = 42 / n**(3.5/4)
-    while n > 0:
-        #generate the location of this vertex & add it to the graph g 
-        x, y, z = random.uniform(0, 1), random.uniform(0,1), random.uniform(0,1)
+    vertices = np.random.rand(n , 4)
+    vertex_tuples = map(tuple, vertices)
+    g = {v: [] for v in vertex_tuples}
 
-        #the location will be the value of this node, so that its outgoing edges can be easily looked up later on 
-        g[(x, y, z)] = []
-
-        n -= 1
 
     #go through all of the pairs of verticies and add an edge whose weight is just the euclidean distance between them 
     #dude so you avoid redundant calculations, just only compute the edge if j is greater than I!!
@@ -127,7 +122,7 @@ def dim3_graph(n):
             if j > i: 
                 
                 euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 + (u[2] - v[2])**2)**(1/2)
-                if euc_dis < 1: 
+                if euc_dis < upper_bound: 
 
                     g[u].append((v, euc_dis))
                     g[v].append((u, euc_dis))
@@ -136,17 +131,11 @@ def dim3_graph(n):
 
 #4 Dimensional Graph Generator
 def teseract_graph(n): 
-    g = {}
     upper_bound = 64/n**(2.9/4)
     
-    while n > 0:
-        #generate the location of this vertex & add it to the graph g 
-        x, y, z, w = random.uniform(0, 1), random.uniform(0,1), random.uniform(0,1), random.uniform(0,1)
-
-        #the location will be the value of this node, so that its outgoing edges can be easily looked up later on 
-        g[(x, y, z, w)] = []
-
-        n -= 1
+    vertices = np.random.rand(n , 4)
+    vertex_tuples = map(tuple, vertices)
+    g = {v: [] for v in vertex_tuples}
 
     #go through all of the pairs of verticies and add an edge whose weight is just the euclidean distance between them 
     #dude so you avoid redundant calculations, just only compute the edge if j is greater than I!!
@@ -163,44 +152,6 @@ def teseract_graph(n):
 
     return g
 
-#3 Dimensional Graph Generator
-def cube_graph(n, upper_bound=None):
-    #first we want to generate an array of n vertices with 3 coordinates, (x,y,z), each where x, y, z are random numbers between 0 and 1
-    vertices = np.random.rand(n,3)
-
-
-    upper_bound = 0.3
-
-    '''
-    based on experiments, we can see that we kind of have some sort of exponential decay
-    as n increases, the max weight of an edge decreases exponentially
-
-    38/128
-    55/256
-
-
-    '''
-    #initialize graph as empty dictionary
-    g = {i: [] for i in range(n)}
-
-    #loop through all PAIRS of vertices
-    for i in range(n):
-        for j in range(i+1, n):
-            #calculate Euclidean distance by first finding the differences in x, y, and z coordinates
-            dx = vertices[i][0] - vertices[j][0]
-            dy = vertices[i][1] - vertices[j][1]
-            dz = vertices[i][2] - vertices[j][2]
-            # Square root of sum of squared differences
-            dist = (dx * dx + dy * dy + dz * dz) ** 0.5  
-            
-            #if the distance is less than the threshold, then we keep the edge and add to graph
-            if upper_bound is None or dist < upper_bound:  
-                g[i].append((j, dist))
-                g[j].append((i, dist))
-        
-    return g
-
-        
 
 ''' Min Heap Implementation '''
 class minheap: 
@@ -338,14 +289,17 @@ if __name__ == "__main__":
 
 
     #experiments
-    n_values = [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144]
+    n_values = [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768]
 
-   
+    start = time.time()
     for n in n_values: 
-        # g = teseract_graph(n)
-        g = cube_graph(n, None)
-        
+        #g = teseract_graph(n)
+        g = dim3_graph(n)
         mst_w, max_w = prims_mst(g)
-        print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}")
+        end = time.time()
+        print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}, total_time: {end-start} secs")
+
+    end = time.time()
+    print(f'Total time{end - start} seconds')
 
 
