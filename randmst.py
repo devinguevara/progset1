@@ -5,7 +5,7 @@ import numpy as np
 import sys
 from scipy.spatial.distance import cdist
 import time
-
+import math
 
 
 ''' Below you can find the Graph Generators '''
@@ -135,7 +135,8 @@ def dim3_graph(n):
 
 #4 Dimensional Graph Generator
 def teseract_graph(n): 
-    upper_bound = 64/n**(2.9/4)
+    #upper_bound = 64/n**(2.9/4)
+    upper_bound = 0.748408 - 0.0729517 * math.log(x)
     
     vertices = np.random.rand(n , 4)
     vertex_tuples = map(tuple, vertices)
