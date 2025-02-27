@@ -319,7 +319,7 @@ def main():
     
     avg = sum(mst_record) / num_trials
 
-    print(f"Avg: {avg} -- n: {n} -- trials: {num_trials} -- dim: {dim}")
+    print(f"{avg} {n} {num_trials} {dim}")
 
 if __name__ == "__main__":  
     
