@@ -3,6 +3,9 @@
 import random
 import numpy as np 
 import sys
+from scipy.spatial.distance import cdist
+import time
+
 
 
 ''' Below you can find the Graph Generators '''
@@ -71,35 +74,39 @@ def square_graph(n):
     g = {}
     upper_bound = 18/n**(3/4)
 
-    while n > 0:
-        #generate the location of this vertex & add it to the graph g 
-        x, y = random.uniform(0, 1), random.uniform(0,1)
+    vertices = np.random.rand(n , 2)
+    vertex_tuples = map(tuple, vertices)
+    g = {v: [] for v in vertex_tuples}
 
-        #the location will be the value of this node, so that its outgoing edges can be easily looked up later on 
-        g[(x,y)] = []
+    distances = cdist(vertices, vertices)
 
-        n -= 1
 
     #go through all of the pairs of verticies and add an edge whose weight is just the euclidean distance between them 
     #dude so you avoid redundant calculations, just only compute the edge if j is greater than I!!
-    for i, u in enumerate(g): 
-        for j, v in enumerate(g): 
+    # for i, u in enumerate(g): 
+    #     for j, v in enumerate(g): 
             
-            if j > i: 
+    #         if j > i: 
                 
-                euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 )**(1/2)
+    #             euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 )**(1/2)
 
-                if euc_dis < upper_bound: 
+    #             if euc_dis < upper_bound: 
 
-                    g[u].append((v, euc_dis))
-                    g[v].append((u, euc_dis))
+    #                 g[u].append((v, euc_dis))
+    #                 g[v].append((u, euc_dis))
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            if distances[i, j] < upper_bound:
+                g[tuple(vertices[i])].append((tuple(vertices[j]), distances[i, j]))
+                g[tuple(vertices[j])].append((tuple(vertices[i]), distances[i, j]))
 
     return g
 
 #4 Dimensional Graph Generator
 def dim3_graph(n): 
     upper_bound = 42 / n**(3.5/4)
-    vertices = np.random.rand(n , 4)
+    vertices = np.random.rand(n , 3)
     vertex_tuples = map(tuple, vertices)
     g = {v: [] for v in vertex_tuples}
 
@@ -276,13 +283,13 @@ def avg_mst_weight(n, graph_type, trials = 5):
 def main(): 
 
     #check if enough arguments, vertices, trials, dimension
-    if len(sys.argv) < 3: 
+    if len(sys.argv) < 5: 
         print("Make sure you write the number of nodes, trials, and dimension in that order and in integers.")
         sys.exit(1)
 
-    n = int(sys.argv[1])
-    num_trials = int(sys.argv[2])
-    dim = int(sys.argv[3])
+    n = int(sys.argv[2])
+    num_trials = int(sys.argv[3])
+    dim = int(sys.argv[4])
 
     if num_trials <= 0 or dim < 0 or dim > 3: 
         print("Make sure your dimension argument and your trial argument are within bounds")
@@ -324,7 +331,7 @@ if __name__ == "__main__":
     # start = time.time()
     # for n in n_values: 
     #     #g = teseract_graph(n)
-    #     g = hypercube_graph(n)
+    #     g = square_graph(n)
     #     mst_w, max_w = prims_mst(g)
     #     end = time.time()
     #     print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}, total_time: {end-start} secs")
