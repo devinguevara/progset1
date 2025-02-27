@@ -291,7 +291,7 @@ def main():
     num_trials = int(sys.argv[3])
     dim = int(sys.argv[4])
 
-    if num_trials <= 0 or dim < 0 or dim > 3: 
+    if num_trials <= 0 or dim < 0 or dim > 4: 
         print("Make sure your dimension argument and your trial argument are within bounds")
         sys.exit(1)
 
