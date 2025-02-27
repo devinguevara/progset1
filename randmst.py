@@ -1,9 +1,5 @@
 
 # libraries 
-import matplotlib.pyplot as plt
-import seaborn as sns
-import time
-import pandas as pd 
 import random
 import numpy as np 
 import sys
@@ -284,14 +280,13 @@ def main():
         print("Make sure you write the number of nodes, trials, and dimension in that order and in integers.")
         sys.exit(1)
 
-    n = sys.argv[1]
-    num_trials = sys.argv[2]
-    dim = sys.argv[3]
+    n = int(sys.argv[1])
+    num_trials = int(sys.argv[2])
+    dim = int(sys.argv[3])
 
-    if num_trials <= 0 or dim <= 0 or dim > 3: 
+    if num_trials <= 0 or dim < 0 or dim > 3: 
         print("Make sure your dimension argument and your trial argument are within bounds")
         sys.exit(1)
-
 
     mst_record = [] 
 
@@ -321,20 +316,20 @@ def main():
 
 if __name__ == "__main__":  
     
+    main()
 
+    # #experiments
+    # n_values = [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768]
 
-    #experiments
-    n_values = [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768]
+    # start = time.time()
+    # for n in n_values: 
+    #     #g = teseract_graph(n)
+    #     g = hypercube_graph(n)
+    #     mst_w, max_w = prims_mst(g)
+    #     end = time.time()
+    #     print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}, total_time: {end-start} secs")
 
-    start = time.time()
-    for n in n_values: 
-        #g = teseract_graph(n)
-        g = complete_graph(n)
-        mst_w, max_w = prims_mst(g)
-        end = time.time()
-        print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}, total_time: {end-start} secs")
-
-    end = time.time()
-    print(f'Total time{end - start} seconds')
+    # end = time.time()
+    # print(f'Total time{end - start} seconds')
 
 
