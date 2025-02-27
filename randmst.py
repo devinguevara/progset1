@@ -105,7 +105,7 @@ def square_graph(n):
 
 #4 Dimensional Graph Generator
 def dim3_graph(n): 
-    upper_bound = 42 / n**(3.5/4)
+    upper_bound = 1.11513 / n**(0.301315)
     vertices = np.random.rand(n , 3)
     vertex_tuples = map(tuple, vertices)
     g = {v: [] for v in vertex_tuples}
