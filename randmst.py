@@ -6,6 +6,7 @@ import time
 import pandas as pd 
 import random
 import numpy as np 
+import sys
 
 
 ''' Below you can find the Graph Generators '''
@@ -28,11 +29,6 @@ def complete_graph(n):
      upper bound = 9.99 / 4096
      upper bound = 
     '''
-    # for w in weight: 
-    #     if w > upp
-    #     u = random.randint(0, n - 1) #because this is inclusive
-    #     v = random.randint(0, n - 1)
-
     for u in range(n): 
         for v in range(u + 1, n): 
             w = random.uniform(0, 1)
@@ -41,7 +37,6 @@ def complete_graph(n):
                 g[v].append((u, w))
 
     return g 
-
 
 #Hypercube Graph Generator 
 def hypercube_graph(n):
@@ -104,7 +99,6 @@ def square_graph(n):
                     g[v].append((u, euc_dis))
 
     return g
-
 
 #4 Dimensional Graph Generator
 def dim3_graph(n): 
@@ -262,7 +256,6 @@ def prims_mst(g):
 
     return mst_weight, max_weight
 
-
 def avg_mst_weight(n, graph_type, trials = 5):
     total_weight = 0
 
@@ -284,6 +277,48 @@ def avg_mst_weight(n, graph_type, trials = 5):
     print(f"  → Average MST Weight for n={n}: {avg_weight:.4f}\n")
     return avg_weight
 
+def main(): 
+
+    #check if enough arguments, vertices, trials, dimension
+    if len(sys.argv) < 3: 
+        print("Make sure you write the number of nodes, trials, and dimension in that order and in integers.")
+        sys.exit(1)
+
+    n = sys.argv[1]
+    num_trials = sys.argv[2]
+    dim = sys.argv[3]
+
+    if num_trials <= 0 or dim <= 0 or dim > 3: 
+        print("Make sure your dimension argument and your trial argument are within bounds")
+        sys.exit(1)
+
+
+    mst_record = [] 
+
+    for _ in range(num_trials): 
+        g = None
+
+        #generate the correct graph 
+        if dim == 0: 
+            g = complete_graph(n)
+        elif dim == 1:
+            g = hypercube_graph(n)
+        elif dim == 2: 
+            g = square_graph(n)
+        elif dim == 3: 
+            g = dim3_graph(n)
+        else: 
+            g = teseract_graph(n)
+
+        #produce the mst & save the weight 
+        mst_w, max_w = prims_mst(g)
+
+        mst_record.append(mst_w)
+    
+    avg = sum(mst_record) / num_trials
+
+    print(f"Avg: {avg} -- n: {n} -- trials: {num_trials} -- dim: {dim}")
+
 if __name__ == "__main__":  
     
 
@@ -294,7 +329,7 @@ if __name__ == "__main__":
     start = time.time()
     for n in n_values: 
         #g = teseract_graph(n)
-        g = dim3_graph(n)
+        g = complete_graph(n)
         mst_w, max_w = prims_mst(g)
         end = time.time()
         print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}, total_time: {end-start} secs")
