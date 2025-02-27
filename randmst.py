@@ -109,20 +109,27 @@ def dim3_graph(n):
     vertices = np.random.rand(n , 3)
     vertex_tuples = map(tuple, vertices)
     g = {v: [] for v in vertex_tuples}
-
+    distances = cdist(vertices, vertices)
 
     #go through all of the pairs of verticies and add an edge whose weight is just the euclidean distance between them 
     #dude so you avoid redundant calculations, just only compute the edge if j is greater than I!!
-    for i, u in enumerate(g): 
-        for j, v in enumerate(g): 
+    # for i, u in enumerate(g): 
+    #     for j, v in enumerate(g): 
             
-            if j > i: 
+    #         if j > i: 
                 
-                euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 + (u[2] - v[2])**2)**(1/2)
-                if euc_dis < upper_bound: 
+    #             euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 + (u[2] - v[2])**2)**(1/2)
+    #             if euc_dis < upper_bound: 
 
-                    g[u].append((v, euc_dis))
-                    g[v].append((u, euc_dis))
+    #                 g[u].append((v, euc_dis))
+    #                 g[v].append((u, euc_dis))
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            if distances[i, j] < upper_bound:
+                g[tuple(vertices[i])].append((tuple(vertices[j]), distances[i, j]))
+                g[tuple(vertices[j])].append((tuple(vertices[i]), distances[i, j]))
+
 
     return g
 
@@ -133,19 +140,28 @@ def teseract_graph(n):
     vertices = np.random.rand(n , 4)
     vertex_tuples = map(tuple, vertices)
     g = {v: [] for v in vertex_tuples}
+    distances = cdist(vertices, vertices)
 
     #go through all of the pairs of verticies and add an edge whose weight is just the euclidean distance between them 
     #dude so you avoid redundant calculations, just only compute the edge if j is greater than I!!
-    for i, u in enumerate(g): 
-        for j, v in enumerate(g): 
+    # for i, u in enumerate(g): 
+    #     for j, v in enumerate(g): 
             
-            if j > i: 
+    #         if j > i: 
                 
-                euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 + (u[2] - v[2])**2 + (u[3] - v[3])**2)**(1/2)
-                if euc_dis < upper_bound: 
+    #             euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 + (u[2] - v[2])**2 + (u[3] - v[3])**2)**(1/2)
+    #             if euc_dis < upper_bound: 
 
-                    g[u].append((v, euc_dis))
-                    g[v].append((u, euc_dis))
+    #                 g[u].append((v, euc_dis))
+    #                 g[v].append((u, euc_dis))
+
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            if distances[i, j] < upper_bound:
+                g[tuple(vertices[i])].append((tuple(vertices[j]), distances[i, j]))
+                g[tuple(vertices[j])].append((tuple(vertices[i]), distances[i, j]))
+
 
     return g
 
