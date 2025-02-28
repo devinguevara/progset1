@@ -136,7 +136,20 @@ def dim3_graph(n):
 #4 Dimensional Graph Generator
 def teseract_graph(n): 
     #upper_bound = 64/n**(2.9/4)
-    upper_bound = 0.748408 - 0.0729517 * math.log(x)
+    upper_bound = 1.2 *n**(-0.219409)
+
+    g = {i: [] for i in range(n)}
+    coords = {i: (random.random(), random.random(), random.random(), random.random()) for i in range(n)}
+
+    # for _ in range(num_extra_edges):
+    #     u, v = random.sample(range(n), 2)
+    #     if v not in {w[0] for w in g[u]}:  # Avoid duplicates
+    #         dist = cdist(coords[u], coords[v])
+    #         if dist < threshold:  # Only connect if within range
+    #             g[u].append((v, dist))
+    #             g[v].append((u, dist))
+
+    # return g
     
     vertices = np.random.rand(n , 4)
     vertex_tuples = map(tuple, vertices)
@@ -342,13 +355,13 @@ if __name__ == "__main__":
     
     main()
 
-    # #experiments
+    #experiments
     # n_values = [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768]
 
     # start = time.time()
     # for n in n_values: 
-    #     #g = teseract_graph(n)
-    #     g = square_graph(n)
+    #     g = teseract_graph(n)
+    #     # g = square_graph(n)
     #     mst_w, max_w = prims_mst(g)
     #     end = time.time()
     #     print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}, total_time: {end-start} secs")
