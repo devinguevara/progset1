@@ -80,21 +80,6 @@ def square_graph(n):
 
     distances = cdist(vertices, vertices)
 
-
-    #go through all of the pairs of verticies and add an edge whose weight is just the euclidean distance between them 
-    #dude so you avoid redundant calculations, just only compute the edge if j is greater than I!!
-    # for i, u in enumerate(g): 
-    #     for j, v in enumerate(g): 
-            
-    #         if j > i: 
-                
-    #             euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 )**(1/2)
-
-    #             if euc_dis < upper_bound: 
-
-    #                 g[u].append((v, euc_dis))
-    #                 g[v].append((u, euc_dis))
-
     for i in range(n):
         for j in range(i + 1, n):
             if distances[i, j] < upper_bound:
@@ -106,23 +91,14 @@ def square_graph(n):
 #4 Dimensional Graph Generator
 def dim3_graph(n): 
     upper_bound = 1.11513 / n**(0.301315)
+    
+    #generate vertices faster using numpy and male them into tuples. 
     vertices = np.random.rand(n , 3)
     vertex_tuples = map(tuple, vertices)
     g = {v: [] for v in vertex_tuples}
+
+    #calculate the distances automatically
     distances = cdist(vertices, vertices)
-
-    #go through all of the pairs of verticies and add an edge whose weight is just the euclidean distance between them 
-    #dude so you avoid redundant calculations, just only compute the edge if j is greater than I!!
-    # for i, u in enumerate(g): 
-    #     for j, v in enumerate(g): 
-            
-    #         if j > i: 
-                
-    #             euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 + (u[2] - v[2])**2)**(1/2)
-    #             if euc_dis < upper_bound: 
-
-    #                 g[u].append((v, euc_dis))
-    #                 g[v].append((u, euc_dis))
 
     for i in range(n):
         for j in range(i + 1, n):
@@ -135,40 +111,12 @@ def dim3_graph(n):
 
 #4 Dimensional Graph Generator
 def teseract_graph(n): 
-    #upper_bound = 64/n**(2.9/4)
     upper_bound = 1.2 *n**(-0.219409)
 
-    g = {i: [] for i in range(n)}
-    coords = {i: (random.random(), random.random(), random.random(), random.random()) for i in range(n)}
-
-    # for _ in range(num_extra_edges):
-    #     u, v = random.sample(range(n), 2)
-    #     if v not in {w[0] for w in g[u]}:  # Avoid duplicates
-    #         dist = cdist(coords[u], coords[v])
-    #         if dist < threshold:  # Only connect if within range
-    #             g[u].append((v, dist))
-    #             g[v].append((u, dist))
-
-    # return g
-    
     vertices = np.random.rand(n , 4)
     vertex_tuples = map(tuple, vertices)
     g = {v: [] for v in vertex_tuples}
     distances = cdist(vertices, vertices)
-
-    #go through all of the pairs of verticies and add an edge whose weight is just the euclidean distance between them 
-    #dude so you avoid redundant calculations, just only compute the edge if j is greater than I!!
-    # for i, u in enumerate(g): 
-    #     for j, v in enumerate(g): 
-            
-    #         if j > i: 
-                
-    #             euc_dis = ( (u[0] - v[0])**2 + (u[1] - v[1])**2 + (u[2] - v[2])**2 + (u[3] - v[3])**2)**(1/2)
-    #             if euc_dis < upper_bound: 
-
-    #                 g[u].append((v, euc_dis))
-    #                 g[v].append((u, euc_dis))
-
 
     for i in range(n):
         for j in range(i + 1, n):
@@ -289,27 +237,6 @@ def prims_mst(g):
 
     return mst_weight, max_weight
 
-def avg_mst_weight(n, graph_type, trials = 5):
-    total_weight = 0
-
-    print(f"\nRunning {trials} trials for {graph_type} Graph with n={n}:")
-    
-    for i in range(trials):
-        if graph_type == "complete":
-            g = complete_graph(n)
-        elif graph_type == "hypercube":
-            g = hypercube_graph(n)
-        else:
-            raise ValueError("Invalid graph type")
-
-        mst_weight = prims_mst(g)
-        total_weight += mst_weight
-        print(f"  Trial {i+1}: n={n}, MST Weight={mst_weight:.4f}")
-
-    avg_weight = total_weight / trials
-    print(f"  → Average MST Weight for n={n}: {avg_weight:.4f}\n")
-    return avg_weight
-
 def main(): 
 
     #check if enough arguments, vertices, trials, dimension
@@ -354,19 +281,4 @@ def main():
 if __name__ == "__main__":  
     
     main()
-
-    #experiments
-    # n_values = [128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768]
-
-    # start = time.time()
-    # for n in n_values: 
-    #     g = teseract_graph(n)
-    #     # g = square_graph(n)
-    #     mst_w, max_w = prims_mst(g)
-    #     end = time.time()
-    #     print(f"n: {n} ----MST weight:{mst_w}  Max_w: {max_w}, total_time: {end-start} secs")
-
-    # end = time.time()
-    # print(f'Total time{end - start} seconds')
-
 
